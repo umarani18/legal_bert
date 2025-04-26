@@ -1,0 +1,379 @@
+/* Case Analysis Styles */
+
+.analysis-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.analysis-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.analysis-header h1 {
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.analysis-header p {
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+}
+
+/* Analysis Steps */
+.analysis-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.analysis-steps::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.step-item {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--light-bg);
+    border: 2px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1rem;
+    font-weight: 700;
+    color: #666;
+    transition: var(--transition);
+    position: relative;
+}
+
+.step-label {
+    font-size: 0.9rem;
+    color: #666;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.step-item.active .step-circle {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.step-item.active .step-label {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.step-item.completed .step-circle {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.step-item.completed .step-circle::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+
+/* Analysis Form */
+.analysis-form-container {
+    background-color: var(--bg-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.form-step-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-step-header h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-step-header p {
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-section {
+    background-color: var(--bg-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+/* Result Styles */
+.result-container {
+    background-color: var(--bg-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 3rem;
+}
+
+.result-header {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    padding: 2rem;
+}
+
+.result-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-date {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.result-content {
+    padding: 2rem;
+}
+
+.result-section {
+    margin-bottom: 2rem;
+}
+
+.result-section:last-child {
+    margin-bottom: 0;
+}
+
+.result-section h3 {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.result-summary {
+    background-color: var(--light-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.summary-title {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.summary-text {
+    line-height: 1.8;
+}
+
+.summary-text p {
+    margin-bottom: 1rem;
+}
+
+.summary-text p:last-child {
+    margin-bottom: 0;
+}
+
+.result-diagram {
+    margin-top: 2rem;
+}
+
+.probability-bar {
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.probability-fill {
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-radius: 15px 0 0 15px;
+    position: relative;
+}
+
+.probability-text {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.probability-label {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Recommendation Styles */
+.recommendation-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-left: 3px solid var(--secondary-color);
+    padding-left: 1.5rem;
+}
+
+.recommendation-item:last-child {
+    margin-bottom: 0;
+}
+
+.recommendation-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(192, 57, 43, 0.1);
+    color: var(--secondary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+}
+
+.recommendation-icon i {
+    font-size: 1.5rem;
+}
+
+.recommendation-text h4 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-text p {
+    color: #666;
+    line-height: 1.7;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .analysis-steps {
+        flex-wrap: wrap;
+    }
+    
+    .step-item {
+        width: 50%;
+        margin-bottom: 1.5rem;
+    }
+    
+    .analysis-steps::before {
+        top: auto;
+        bottom: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .form-actions button, .form-actions a {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .result-header {
+        padding: 1.5rem;
+    }
+    
+    .result-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .analysis-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .step-item {
+        width: 100%;
+    }
+    
+    .analysis-steps::before {
+        display: none;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .recommendation-item {
+        flex-direction: column;
+    }
+    
+    .recommendation-icon {
+        margin-bottom: 1rem;
+        margin-right: 0;
+    }
+}
