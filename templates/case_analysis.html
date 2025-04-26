@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Case Analysis - Legal Advisor{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='analysis_styles.css') }}">
+{% endblock %}
+
+{% block body_class %}dashboard-body{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="logo">
+            <h2>Legal<span style="color: #c3e3cb; font-weight: 700;">BERT</span> Advisor</h2>
+        </div>
+        <div class="user-info">
+            <span>Welcome, {{ session.name }}!</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-content">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li class="active"><a href="{{ url_for('case_analysis') }}"><i class="fas fa-balance-scale"></i> Case Analysis</a></li>
+                <li><a href="{{ url_for('my_cases') }}"><i class="fas fa-folder"></i> My Cases</a></li>
+                <li><a href="{{ url_for('find_lawyers_route') }}"><i class="fas fa-user-tie"></i> Find Lawyers</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="content-header">
+                <h1><i class="fas fa-balance-scale"></i> Case Analysis</h1>
+                <p>Submit your case details for professional analysis</p>
+            </div>
+
+            <div class="case-form-container">
+                <form method="POST" action="{{ url_for('case_analysis') }}" class="case-form">
+                    <div class="form-tips">
+                        <h3><i class="fas fa-lightbulb"></i> Tips for better analysis:</h3>
+                        <ul>
+                            <li>Be specific about the legal issue you're facing</li>
+                            <li>Include important dates and timeline of events</li>
+                            <li>Mention any relevant documents or evidence you have</li>
+                            <li>Clearly state what you hope to achieve</li>
+                            <li>Avoid using personal identifiers if privacy is a concern</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Case Description:</label>
+                        <textarea id="description" name="description" rows="10" required 
+                                  placeholder="Please provide detailed information about your case. Include relevant dates, parties involved, and the specific legal issue you're facing."></textarea>
+                    </div>
+
+                    
+                    <div class="form-submit">
+                        <button type="submit" class="primary-btn">Submit for Analysis</button>
+                        <a href="{{ url_for('user_dashboard') }}" class="secondary-btn">Cancel</a>
+                    </div>
+                </form>
+                {% if analysis_result %}
+                <div class="analysis-result">
+                    <h2><i class="fas fa-file-alt"></i> Analysis Result</h2>
+                    <p>{{ analysis_result }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

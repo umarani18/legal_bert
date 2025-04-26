@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}My Cases - LegalBERT Advisor{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
+{% endblock %}
+
+{% block body_class %}dashboard-body{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="logo">
+            <h2>Legal<span style="color: #c3e3cb; font-weight: 700;">BERT</span> Advisor</h2>
+        </div>
+        <div class="user-info">
+            <span>Welcome, {{ session.name }}!</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-content">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('case_analysis') }}"><i class="fas fa-balance-scale"></i> Case Analysis</a></li>
+                <li class="active"><a href="{{ url_for('my_cases') }}"><i class="fas fa-folder"></i> My Cases</a></li>
+                <li><a href="{{ url_for('find_lawyers_route') }}"><i class="fas fa-user-tie"></i> Find Lawyers</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            
+            <div class="dashboard-tabs">
+                <div class="tab-list">
+                    <button class="tab-button active" data-tab="all-cases">All Cases</button>
+                </div>
+            </div>
+
+            <div class="tab-content active" id="all-cases">
+                {% if cases %}
+                    <div class="case-container">
+                        {% for case in cases %}
+                        <div class="case-card">
+                            <div class="case-header">
+                                <h3 class="case-title">Case #{{ case.id }}</h3>
+                                <div class="case-id">{{ case.analysis_result }}</div>
+                            </div>
+                            <div class="case-body">
+                                <div class="case-detail">
+                                    <i class="fas fa-calendar"></i>
+                                    <div>
+                                        <span class="case-detail-label">Date:</span>
+                                        <span class="case-detail-value">{{ case.date_created.strftime('%d %b %Y') }}</span>
+                                    </div>
+                                </div>
+                                <div class="case-detail">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div>
+                                        <span class="case-detail-label">Status:</span>
+                                        <span class="case-status status-{{ case.status.lower() }}">{{ case.status }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="case-footer">
+                                <div class="case-date">{{ case.date_created.strftime('%d %b %Y') }}</div>
+                                <div class="case-actions">
+                                    <a href="{{ url_for('view_case', case_id=case.id) }}">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <h3>No cases yet</h3>
+                        <p>Start by submitting your first case for analysis</p>
+                        <a href="{{ url_for('case_analysis') }}" class="primary-btn">Analyze Case</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    // Tab switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

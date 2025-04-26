@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Find Lawyers - LegalBERT Advisor{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='lawyer_styles.css') }}">
+{% endblock %}
+
+{% block body_class %}dashboard-body{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="logo">
+            <h2>Legal<span style="color: #c3e3cb; font-weight: 700;">BERT</span> Advisor</h2>
+        </div>
+        <div class="user-info">
+            <span>Welcome, {{ session.name }}!</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-content">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('case_analysis') }}"><i class="fas fa-balance-scale"></i> Case Analysis</a></li>
+                <li><a href="{{ url_for('my_cases') }}"><i class="fas fa-folder"></i> My Cases</a></li>
+                <li class="active"><a href="{{ url_for('find_lawyers_route') }}"><i class="fas fa-user-tie"></i> Find Lawyers</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="finder-header">
+                <h1>Find Qualified Lawyers</h1>
+                <p>Connect with specialized lawyers for your specific legal needs</p>
+            </div>
+
+            <div class="search-container">
+                <form method="POST" action="{{ url_for('find_lawyers_route') }}" class="search-form">
+                    <div class="form-group">
+                        <label for="district">Location</label>
+                        <input type="text" id="district" name="district" placeholder="Enter district or city" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="case_type">Case Type</label>
+                        <select id="case_type" name="case_type" required>
+                            <option value="" disabled selected>Select case type</option>
+                            {% for category in categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="search-footer">
+                        <button type="submit" class="primary-btn"><i class="fas fa-search"></i> Find Lawyers</button>
+                    </div>
+                </form>
+            </div>
+
+            {% if search_performed %}
+                <div class="filter-container">
+                    <a href="#" class="filter-chip active">{{ request.form.get('case_type') }} <i class="fas fa-times"></i></a>
+                    <a href="#" class="filter-chip active">{{ request.form.get('district') }} <i class="fas fa-times"></i></a>
+                </div>
+                
+                {% if lawyers %}
+                    <div class="results-info">
+                        <div class="results-count">{{ lawyers|length }} lawyers found</div>
+                        <div class="sort-by">
+                            <label for="sort">Sort by:</label>
+                            <select id="sort" name="sort">
+                                <option value="relevance">Relevance</option>
+                                <option value="rating">Rating</option>
+                                <option value="experience">Experience</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="lawyers-grid">
+                        {% for lawyer in lawyers %}
+                        <div class="lawyer-card">
+                            <div class="lawyer-header">
+                                <div class="lawyer-avatar">
+                                    <img src="https://randomuser.me/api/portraits/men/{{ loop.index }}.jpg" alt="{{ lawyer.lawyer_name }}">
+                                </div>
+                            </div>
+                            <div class="lawyer-body">
+                                <h3 class="lawyer-name">{{ lawyer.lawyer_name }}</h3>
+                                <p class="lawyer-title">{{ lawyer.Category }} Specialist</p>
+                                
+                                <div class="lawyer-rating">
+                                    <div class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <span class="reviews-count">({{ range(10, 50)|random }} reviews)</span>
+                                </div>
+                                
+                                <div class="lawyer-specialties">
+                                    <span class="specialty-tag">{{ lawyer.Category }}</span>
+                                </div>
+                                
+                                <div class="lawyer-info">
+                                    <div class="info-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ lawyer.district }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>{{ lawyer.phone_number }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-location-dot"></i>
+                                        <span>{{ lawyer.address }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="lawyer-actions">
+                                    <form method="POST" action="{{ url_for('request_lawyer') }}">
+                                        <input type="hidden" name="lawyer_id" value="{{ lawyer.lawyer_id }}">
+                                        <input type="hidden" name="lawyer_name" value="{{ lawyer.lawyer_name }}">
+                                        <input type="hidden" name="case_type" value="{{ request.form.get('case_type') }}">
+                                        <select name="case_id" class="case-select" required>
+                                            <option value="" disabled selected>Select a case</option>
+                                            {% for case in user_cases %}
+                                                <option value="{{ case.id }}">Case #{{ case.id }} - {{ case.analysis_result }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="request-btn"><i class="fas fa-gavel"></i> Request Lawyer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3>No lawyers found</h3>
+                        <p>No lawyers match your search criteria. Try adjusting your filters.</p>
+                        <a href="{{ url_for('find_lawyers_route') }}" class="secondary-btn">Reset Filters</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Search for lawyers</h3>
+                    <p>Enter your location and case type to find qualified legal professionals</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    // Sort functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sortSelect = document.getElementById('sort');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                // Sort functionality would go here
+                console.log('Sorting by: ' + this.value);
+            });
+        }
+    });
+</script>
+{% endblock %}

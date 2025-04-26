@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - LegalBERT Advisor{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
+{% endblock %}
+
+{% block body_class %}dashboard-body{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="logo">
+            <h2>Legal<span style="color: #c3e3cb; font-weight: 700;">BERT</span> Advisor</h2>
+        </div>
+        <div class="user-info">
+            <span>Welcome, {{ session.name }}!</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-content">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="active"><a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('case_analysis') }}"><i class="fas fa-balance-scale"></i> Case Analysis</a></li>
+                <li><a href="{{ url_for('my_cases') }}"><i class="fas fa-folder"></i> My Cases</a></li>
+                <li><a href="{{ url_for('find_lawyers_route') }}"><i class="fas fa-user-tie"></i> Find Lawyers</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="welcome-section">
+                <h1>Welcome to Your Legal Assistant</h1>
+                <p>Get personalized legal advice and connect with qualified lawyers</p>
+            </div>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Case Analysis</h3>
+                        <p>Submit your case details for a comprehensive analysis</p>
+                        <a href="{{ url_for('case_analysis') }}" class="card-btn">Submit Case</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Lawyer Connect</h3>
+                        <p>Find and connect with specialized lawyers in your area</p>
+                        <a href="{{ url_for('find_lawyers_route') }}" class="card-btn">Find Lawyers</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h2>Recent Activity</h2>
+                {% if recent_cases %}
+                    <div class="cases-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Case ID</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Analysis</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for case in recent_cases %}
+                                <tr>
+                                    <td>#{{ case.id }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ case.status.lower() }}">
+                                            {{ case.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ case.date_created.strftime('%d %b %Y') }}</td>
+                                    <td>{{ case.analysis_result }}</td>
+                                    <td>
+                                        <a href="{{ url_for('view_case', case_id=case.id) }}" class="action-btn view-btn">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="activity-empty">
+                        <p>No recent activities to display</p>
+                        <a href="{{ url_for('case_analysis') }}" class="primary-btn"><i class="fas fa-plus"></i> Submit Your First Case</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

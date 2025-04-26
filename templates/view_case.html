@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Case Details - LegalBERT Advisor{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
+{% endblock %}
+
+{% block body_class %}dashboard-body{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="logo">
+            <h2>Legal<span style="color: #c3e3cb; font-weight: 700;">BERT</span> Advisor</h2>
+        </div>
+        <div class="user-info">
+            <span>Welcome, {{ session.name }}!</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-content">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('case_analysis') }}"><i class="fas fa-balance-scale"></i> Case Analysis</a></li>
+                <li class="active"><a href="{{ url_for('my_cases') }}"><i class="fas fa-folder"></i> My Cases</a></li>
+                <li><a href="{{ url_for('find_lawyers_route') }}"><i class="fas fa-user-tie"></i> Find Lawyers</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="case-detail-container">
+                <div class="case-detail-header">
+                    <h2 class="case-detail-title">Case #{{ case.id }}</h2>
+                    <div class="case-detail-meta">
+                        <div class="case-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>{{ case.date_created.strftime('%d %b %Y, %H:%M') }}</span>
+                        </div>
+                        <div class="case-meta-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="status-{{ case.status.lower() }}">{{ case.status }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="case-detail-content">
+                    <div class="case-detail-section">
+                        <h3>Case Description</h3>
+                        <div class="case-detail-item">
+                            <p>{{ case.description }}</p>
+                        </div>
+                    </div>
+
+                    <div class="case-detail-section">
+                        <h3>Analysis Results</h3>
+                        {% if case.analysis_result %}
+                            <div class="case-result">
+                                {% for paragraph in case.analysis_result.split('\n\n') %}
+                                    <p>{{ paragraph }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <h3>Analysis in Progress</h3>
+                                <p>Your case is currently being analyzed. Please check back later.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if lawyer_assignment %}
+                    <div class="case-detail-section">
+                        <h3>Lawyer Updates</h3>
+                        <div class="lawyer-info-header">
+                            <div class="lawyer-avatar">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="lawyer-details">
+                                <h4>{{ lawyer_assignment.lawyer_name }}</h4>
+                                <p>Current Status: <span class="status-badge status-{{ lawyer_assignment.status|lower|replace(' ', '-') }}">{{ lawyer_assignment.status }}</span></p>
+                                <p>Assigned on {{ lawyer_assignment.date_assigned.strftime('%d %b %Y') }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if lawyer_notes %}
+                        <div class="lawyer-updates-timeline">
+                            {% for note in lawyer_notes %}
+                            <div class="timeline-item">
+                                <div class="timeline-date">
+                                    <span class="date">{{ note.date_added.strftime('%d %b %Y') }}</span>
+                                    <span class="time">{{ note.date_added.strftime('%I:%M %p') }}</span>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="status-badge status-{{ note.status_at_time|lower|replace(' ', '-') }}">{{ note.status_at_time }}</span>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>{{ note.note_text }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                            <h3>No Updates Yet</h3>
+                            <p>Your lawyer has not provided any case updates yet.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="action-buttons">
+                        <a href="{{ url_for('find_lawyers_route') }}" class="primary-btn"><i class="fas fa-user-tie"></i> Find Lawyers</a>
+                        <a href="{{ url_for('my_cases') }}" class="secondary-btn"><i class="fas fa-arrow-left"></i> Back to My Cases</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

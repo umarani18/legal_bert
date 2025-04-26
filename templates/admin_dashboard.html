@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Lawyer Dashboard - LegalBERT Advisor{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
+{% endblock %}
+
+{% block body_class %}dashboard-body{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div class="logo">
+            <h2>Legal<span style="color: #c3e3cb; font-weight: 700;">BERT</span> Advisor</h2>
+        </div>
+        <div class="user-info">
+            <span>Welcome, {{ session.name }}!</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="dashboard-content">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="active"><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="welcome-section">
+                <h1>Lawyer Dashboard</h1>
+                <p>Manage your assigned cases and client interactions</p>
+            </div>
+
+            <div class="recent-activity">
+                <h2>Assigned Cases</h2>
+                <div class="cases-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Case ID</th>
+                                <th>Client Name</th>
+                                <th>Case Type</th>
+                                <th>Date Assigned</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if recent_cases %}
+                                {% for case in recent_cases %}
+                                <tr>
+                                    <td>#{{ case.id }}</td>
+                                    <td>{{ case.client_name }}</td>
+                                    <td>{{ case.case_type }}</td>
+                                    <td>{{ case.date_assigned }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ case.status|lower }}">
+                                            {{ case.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('lawyer_view_case', case_id=case.id) }}" class="action-btn view-btn">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="no-data">No assigned cases to display</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
